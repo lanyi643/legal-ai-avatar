@@ -4,6 +4,8 @@ services:
     environment:
       LIVETALKING_URL: ${LIVETALKING_URL:-http://host.docker.internal:8010}
       OUTPUT_DIR: /app/outputs
+      APP_USER: ${APP_USER:-legal}
+      APP_PASSWORD: ${APP_PASSWORD:?请先在 .env 中设置 APP_PASSWORD}
     ports:
       - "7860:7860"
     volumes:
