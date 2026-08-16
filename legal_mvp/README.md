@@ -59,3 +59,5 @@ curl -u legal:你的密码 http://127.0.0.1:7860/health
 ## RunPod 云 GPU
 
 完整的从零部署步骤位于 [`../deploy/runpod/README.md`](../deploy/runpod/README.md)，包括模型下载、数字人形象创建、服务启动和日常关机流程。
+
+仓库中的 `assets/default-legal-presenter.png` 是 AI 生成的虚构人物，只用于默认样片和部署验证，不代表律师、司法机关或其他真实身份。
