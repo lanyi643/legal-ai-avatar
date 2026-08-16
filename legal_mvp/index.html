@@ -20,6 +20,8 @@
     <label>口播文案<textarea id="text" required minlength="10" placeholder="公司没有签劳动合同，员工可以主张什么权利？……"></textarea></label>
     <label>数字人 ID<input id="avatar" value="wav2lip256_avatar1"></label>
     <label>中文声音<input id="voice" value="zh-CN-YunxiaNeural"></label>
+    <label>视频标题<input id="title" value="一分钟法律科普" maxlength="40"></label>
+    <label>底部提示<input id="disclaimer" value="AI生成｜一般性法律科普，不构成个案法律意见" maxlength="80"></label>
     <button id="submit">生成视频</button>
   </form>
   <div id="status" class="status">等待提交</div>
@@ -27,11 +29,12 @@
 <script>
 const form=document.querySelector('#form'), statusBox=document.querySelector('#status'), submit=document.querySelector('#submit');
 const textInput=document.querySelector('#text'), avatarInput=document.querySelector('#avatar'), voiceInput=document.querySelector('#voice');
+const titleInput=document.querySelector('#title'), disclaimerInput=document.querySelector('#disclaimer');
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 form.addEventListener('submit',async e=>{
   e.preventDefault(); submit.disabled=true; statusBox.textContent='正在提交…';
   try{
-    const response=await fetch('/api/jobs',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({text:textInput.value,avatar:avatarInput.value,voice:voiceInput.value})});
+    const response=await fetch('/api/jobs',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({text:textInput.value,avatar:avatarInput.value,voice:voiceInput.value,title:titleInput.value,disclaimer:disclaimerInput.value})});
     if(!response.ok) throw new Error(await response.text());
     const created=await response.json();
     for(;;){
