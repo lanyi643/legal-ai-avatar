@@ -1,0 +1,13 @@
+services:
+  legal-mvp:
+    build: .
+    environment:
+      LIVETALKING_URL: ${LIVETALKING_URL:-http://host.docker.internal:8010}
+      OUTPUT_DIR: /app/outputs
+    ports:
+      - "7860:7860"
+    volumes:
+      - ./outputs:/app/outputs
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
