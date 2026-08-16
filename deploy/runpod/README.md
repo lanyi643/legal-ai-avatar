@@ -18,7 +18,7 @@ RunPod 的 Pod 由平台直接运行容器，不支持在 Pod 内使用 Docker C
 
 ```bash
 cd /workspace
-git clone --branch agent/legal-video-mvp https://github.com/lanyi643/legal-ai-avatar.git
+git clone https://github.com/lanyi643/legal-ai-avatar.git
 cd legal-ai-avatar
 bash deploy/runpod/install.sh
 ```
