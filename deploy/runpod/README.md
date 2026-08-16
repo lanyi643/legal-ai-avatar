@@ -27,6 +27,16 @@ bash deploy/runpod/install.sh
 
 ## 3. 创建数字人形象
 
+项目附带一个完全由 AI 生成的虚构人物，可先用它跑通流程：
+
+```bash
+cd /workspace/legal-ai-avatar
+export AVATAR_ID=legal_avatar
+bash deploy/runpod/prepare_default_avatar.sh
+```
+
+如需替换为本人或已授权人物，再按下面步骤上传视频。
+
 先临时启动引擎：
 
 ```bash
