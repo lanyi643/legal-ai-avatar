@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>法律 AI 数字人</title>
+  <style>
+    body{font-family:system-ui,sans-serif;background:#f4f6f8;color:#17202a;margin:0}
+    main{max-width:760px;margin:48px auto;padding:28px;background:#fff;border-radius:18px;box-shadow:0 12px 36px #0001}
+    h1{margin-top:0}label{display:block;font-weight:650;margin-top:18px}
+    textarea,input{box-sizing:border-box;width:100%;margin-top:7px;padding:12px;border:1px solid #ccd2d8;border-radius:10px;font:inherit}
+    textarea{min-height:220px;resize:vertical}button{margin-top:20px;padding:12px 22px;border:0;border-radius:10px;background:#1d4ed8;color:#fff;font-weight:700;cursor:pointer}
+    button:disabled{opacity:.55;cursor:wait}.note{color:#5d6d7e;font-size:14px}.status{margin-top:18px;padding:12px;background:#eef3f8;border-radius:10px;white-space:pre-wrap}
+  </style>
+</head>
+<body><main>
+  <h1>法律 AI 数字人</h1>
+  <p class="note">粘贴已经人工核验的法律科普文案。成片发布时请主动添加 AI 生成标识。</p>
+  <form id="form">
+    <label>口播文案<textarea id="text" required minlength="10" placeholder="公司没有签劳动合同，员工可以主张什么权利？……"></textarea></label>
+    <label>数字人 ID<input id="avatar" value="wav2lip256_avatar1"></label>
+    <label>中文声音<input id="voice" value="zh-CN-YunxiaNeural"></label>
+    <label>视频标题<input id="title" value="一分钟法律科普" maxlength="40"></label>
+    <label>底部提示<input id="disclaimer" value="AI生成｜一般性法律科普，不构成个案法律意见" maxlength="80"></label>
+    <button id="submit">生成视频</button>
+  </form>
+  <div id="status" class="status">等待提交</div>
+</main>
+<script>
+const form=document.querySelector('#form'), statusBox=document.querySelector('#status'), submit=document.querySelector('#submit');
+const textInput=document.querySelector('#text'), avatarInput=document.querySelector('#avatar'), voiceInput=document.querySelector('#voice');
+const titleInput=document.querySelector('#title'), disclaimerInput=document.querySelector('#disclaimer');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+form.addEventListener('submit',async e=>{
+  e.preventDefault(); submit.disabled=true; statusBox.textContent='正在提交…';
+  try{
+    const response=await fetch('/api/jobs',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({text:textInput.value,avatar:avatarInput.value,voice:voiceInput.value,title:titleInput.value,disclaimer:disclaimerInput.value})});
+    if(!response.ok) throw new Error(await response.text());
+    const created=await response.json();
+    for(;;){
+      await sleep(1500); const job=await fetch(`/api/jobs/${created.id}`).then(r=>r.json());
+      statusBox.textContent=job.message;
+      if(job.status==='failed') throw new Error(job.message);
+      if(job.status==='complete'){statusBox.innerHTML=`生成完成：<a href="${job.download_url}">下载 MP4</a>`;break;}
+    }
+  }catch(err){statusBox.textContent='失败：'+err.message;}finally{submit.disabled=false;}
+});
+</script></body></html>
