@@ -14,13 +14,15 @@ GT 730 电脑只负责打开网页和下载成片，不参与模型推理。
 ## 启动
 
 1. 按上游 README 在云 GPU 启动 LiveTalking，确认 `http://127.0.0.1:8010` 可访问。
-2. 在本目录启动控制层：
+2. 创建访问密码并启动控制层：
 
 ```bash
+cp .env.example .env
+# 编辑 .env，把 APP_PASSWORD 换成至少 16 位随机密码
 docker compose up -d --build
 ```
 
-3. 浏览器打开 `http://云服务器IP:7860`，填写文案、数字人 ID 和声音后生成视频。
+3. 浏览器打开 `http://云服务器IP:7860`，用 `.env` 里的账号密码登录，填写文案、数字人 ID、声音、标题和免责声明后生成视频。
 
 若 LiveTalking 在另一台服务器：
 
@@ -34,7 +36,11 @@ LIVETALKING_URL=http://GPU服务器IP:8010 docker compose up -d --build
 curl http://127.0.0.1:7860/health
 ```
 
-`engine` 为 `ok` 才能生成视频。
+健康检查同样需要 Basic Auth。`engine` 为 `ok` 才能生成视频：
+
+```bash
+curl -u legal:你的密码 http://127.0.0.1:7860/health
+```
 
 ## 上线前检查
 
@@ -46,6 +52,10 @@ curl http://127.0.0.1:7860/health
 
 ## 当前边界
 
-- 成片保持 LiveTalking 的原始录制尺寸；9:16 裁切、字幕和封面建议在下一阶段用 FFmpeg 模板完成。
-- 任务状态暂存在内存中，服务重启后会清空；生产环境应接 Redis 或数据库。
+- 成片会自动转换为 1080×1920、添加中文字幕、标题和底部免责声明。
+- 任务元数据会持久化到 `outputs/jobs`；服务重启时，未完成任务会被标记为中断，已完成视频仍可下载。
 - 本项目不把模型权重和人物素材提交到 GitHub。
+
+## RunPod 云 GPU
+
+完整的从零部署步骤位于 [`../deploy/runpod/README.md`](../deploy/runpod/README.md)，包括模型下载、数字人形象创建、服务启动和日常关机流程。
